@@ -1,6 +1,6 @@
 {
   "name": "jarvis",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Jarvis Desktop Assistant",
   "author": "ahsantalks0-cmyk",
   "main": "main.js",
@@ -21,7 +21,8 @@
     "publish": {
       "provider": "github",
       "owner": "ahsantalks0-cmyk",
-      "repo": "jarvis-test-"
+      "repo": "jarvis-test-",
+      "releaseType": "release"
     }
   },
   "dependencies": {

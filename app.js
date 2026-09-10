@@ -10,10 +10,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const progressBar = document.getElementById('download-progress-bar');
   const progressContainer = document.getElementById('progress-container');
 
+  // PC Control Buttons
+  const btnOpenBrowser = document.getElementById('btn-open-browser');
+  const btnCreateFolder = document.getElementById('btn-create-folder');
+  const btnOpenNotepad = document.getElementById('btn-open-notepad');
+  const btnOpenDownloads = document.getElementById('btn-open-downloads');
+  const btnSystemInfo = document.getElementById('btn-system-info');
+  const btnClearLog = document.getElementById('btn-clear-log');
+  const logOutput = document.getElementById('log-output');
+
   const isElectron = Boolean(window.jarvisAPI);
 
   // Initialize version
-  let appVersion = '1.0.0';
+  let appVersion = '1.0.1';
   if (isElectron && window.jarvisAPI.getAppVersion) {
     try {
       appVersion = await window.jarvisAPI.getAppVersion();
@@ -72,7 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Button interaction
+  // Auto-Update check button
   if (checkUpdatesBtn) {
     checkUpdatesBtn.addEventListener('click', async () => {
       checkUpdatesBtn.disabled = true;
@@ -92,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           }, 1500);
         }
       } else {
-        // Web preview simulation
         setTimeout(() => {
           setStatus(
             'Simulated',
@@ -103,6 +111,159 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (checkUpdatesBtn) checkUpdatesBtn.disabled = false;
         }, 800);
       }
+    });
+  }
+
+  // ----------------------------------------------------
+  // Execution Log Helpers
+  // ----------------------------------------------------
+  function appendLog(status, message, details = null) {
+    const emptyNotice = document.getElementById('log-empty');
+    if (emptyNotice) {
+      emptyNotice.remove();
+    }
+
+    if (!logOutput) return;
+
+    const now = new Date();
+    const timestamp = now.toTimeString().split(' ')[0]; // HH:MM:SS
+
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'log-time';
+    timeSpan.textContent = `[${timestamp}]`;
+
+    const statusSpan = document.createElement('span');
+    const isSuccess = status.toUpperCase() === 'SUCCESS';
+    statusSpan.className = isSuccess ? 'log-status-success' : 'log-status-failed';
+    statusSpan.textContent = `[${status.toUpperCase()}]`;
+
+    const msgSpan = document.createElement('span');
+    msgSpan.className = 'log-msg';
+    msgSpan.textContent = message;
+
+    entry.appendChild(timeSpan);
+    entry.appendChild(statusSpan);
+    entry.appendChild(msgSpan);
+
+    if (details) {
+      const detailBox = document.createElement('div');
+      detailBox.className = 'log-detail-box';
+      detailBox.textContent = details;
+      entry.appendChild(detailBox);
+    }
+
+    logOutput.appendChild(entry);
+    logOutput.scrollTop = logOutput.scrollHeight;
+  }
+
+  function formatSystemInfo(data) {
+    if (!data) return '';
+    return [
+      `• Hostname:   ${data.hostname || 'N/A'}`,
+      `• OS User:    ${data.username || 'N/A'}`,
+      `• Platform:   ${data.platform || 'N/A'}`,
+      `• CPU:        ${data.cpuModel || 'N/A'}`,
+      `• Memory:     ${data.freeRamGB} GB free / ${data.totalRamGB} GB total`
+    ].join('\n');
+  }
+
+  if (btnClearLog && logOutput) {
+    btnClearLog.addEventListener('click', () => {
+      logOutput.innerHTML = '<div class="log-empty" id="log-empty">No commands executed yet. Click any button above to test local PC control.</div>';
+    });
+  }
+
+  async function handleControlAction(btn, apiMethod, actionName, mockFn) {
+    if (btn) btn.disabled = true;
+    try {
+      if (isElectron && window.jarvisAPI && typeof window.jarvisAPI[apiMethod] === 'function') {
+        const res = await window.jarvisAPI[apiMethod]();
+        const isSuccess = Boolean(res && res.success);
+        let detailText = null;
+
+        if (res && res.data) {
+          detailText = formatSystemInfo(res.data);
+        }
+
+        appendLog(
+          isSuccess ? 'SUCCESS' : 'FAILED',
+          (res && res.message) || `${actionName}: Command executed`,
+          detailText
+        );
+      } else {
+        // Fallback simulation in web browser preview
+        await new Promise((resolve) => setTimeout(resolve, 350));
+        const mock = mockFn();
+        appendLog(
+          mock.success ? 'SUCCESS' : 'FAILED',
+          mock.message,
+          mock.details || null
+        );
+      }
+    } catch (err) {
+      appendLog('FAILED', `${actionName} execution failed: ${err.message || String(err)}`);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  // 1. Open Browser
+  if (btnOpenBrowser) {
+    btnOpenBrowser.addEventListener('click', () => {
+      handleControlAction(btnOpenBrowser, 'openBrowser', 'Open Browser', () => ({
+        success: true,
+        message: 'Opened https://www.google.com in default browser (shell.openExternal simulated in web preview)'
+      }));
+    });
+  }
+
+  // 2. Create Desktop Folder
+  if (btnCreateFolder) {
+    btnCreateFolder.addEventListener('click', () => {
+      handleControlAction(btnCreateFolder, 'createDesktopFolder', 'Create Desktop Folder', () => ({
+        success: true,
+        message: 'Created folder "JarvisTest" on Desktop at ~/Desktop/JarvisTest (simulated in web preview)'
+      }));
+    });
+  }
+
+  // 3. Open Notepad
+  if (btnOpenNotepad) {
+    btnOpenNotepad.addEventListener('click', () => {
+      handleControlAction(btnOpenNotepad, 'openNotepad', 'Open Notepad', () => ({
+        success: true,
+        message: 'Launched Notepad using child_process.exec("notepad.exe") (simulated in web preview)'
+      }));
+    });
+  }
+
+  // 4. Open Downloads Folder
+  if (btnOpenDownloads) {
+    btnOpenDownloads.addEventListener('click', () => {
+      handleControlAction(btnOpenDownloads, 'openDownloads', 'Open Downloads', () => ({
+        success: true,
+        message: 'Opened Downloads folder in File Explorer via shell.openPath (simulated in web preview)'
+      }));
+    });
+  }
+
+  // 5. Show System Info
+  if (btnSystemInfo) {
+    btnSystemInfo.addEventListener('click', () => {
+      handleControlAction(btnSystemInfo, 'getSystemInfo', 'System Info', () => ({
+        success: true,
+        message: 'System specifications retrieved successfully',
+        details: [
+          '• Hostname:   DESKTOP-CLIENT',
+          '• OS User:    ahsantalks0-cmyk',
+          '• Platform:   Windows 11 Pro (10.0.22631)',
+          '• CPU:        12th Gen Intel(R) Core(TM) i7-12700H',
+          '• Memory:     9.42 GB free / 16.00 GB total'
+        ].join('\n')
+      }));
     });
   }
 });

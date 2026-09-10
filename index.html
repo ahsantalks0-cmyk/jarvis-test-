@@ -215,8 +215,185 @@
         cursor: not-allowed;
       }
 
+      /* PC Control Test Styles */
+      .section-divider {
+        height: 1px;
+        background: #1f2937;
+        margin: 24px 0 20px 0;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .section-heading {
+        font-size: 15px;
+        font-weight: 600;
+        color: #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .section-subtext {
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      .control-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .control-grid .btn-span-full {
+        grid-column: 1 / -1;
+      }
+
+      .btn-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background: #182232;
+        border: 1px solid #283548;
+        border-radius: 8px;
+        color: #e2e8f0;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-align: left;
+      }
+
+      .btn-control:hover:not(:disabled) {
+        background: #202d42;
+        border-color: #3b82f6;
+        color: #ffffff;
+      }
+
+      .btn-control:active:not(:disabled) {
+        background: #141c2b;
+      }
+
+      .btn-control:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-control svg {
+        flex-shrink: 0;
+        color: #60a5fa;
+      }
+
+      /* Result Log Card */
+      .log-card {
+        background: #090d16;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-top: 14px;
+      }
+
+      .log-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #172033;
+        margin-bottom: 10px;
+      }
+
+      .log-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+      }
+
+      .btn-clear-log {
+        background: transparent;
+        border: none;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: color 0.15s ease;
+      }
+
+      .btn-clear-log:hover {
+        color: #cbd5e1;
+      }
+
+      .log-output {
+        max-height: 190px;
+        overflow-y: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        line-height: 1.55;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .log-empty {
+        color: #475569;
+        font-style: italic;
+        padding: 10px 0;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+
+      .log-entry {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        word-break: break-word;
+        padding: 3px 0;
+      }
+
+      .log-time {
+        color: #64748b;
+        flex-shrink: 0;
+      }
+
+      .log-status-success {
+        color: #10b981;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .log-status-failed {
+        color: #ef4444;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .log-msg {
+        color: #e2e8f0;
+      }
+
+      .log-detail-box {
+        margin-top: 4px;
+        padding: 8px 10px;
+        background: #111827;
+        border: 1px solid #1f2937;
+        border-radius: 6px;
+        color: #93c5fd;
+        font-size: 11px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
       .footer-info {
-        margin-top: 20px;
+        margin-top: 22px;
         font-size: 12px;
         color: #64748b;
         text-align: center;
@@ -238,10 +415,11 @@
         </div>
         <div class="version-tag" id="version-tag" title="Application Version">
           <span class="pulse-dot" id="pulse-dot"></span>
-          <span id="app-version">v1.0.0</span>
+          <span id="app-version">v1.0.1</span>
         </div>
       </header>
 
+      <!-- Auto-Update Pipeline Section -->
       <section class="status-card" id="status-card">
         <div class="status-card-header" id="status-card-header">
           <span class="status-label" id="status-label">Update Status</span>
@@ -266,8 +444,92 @@
         </button>
       </div>
 
+      <!-- PC Control Test Section -->
+      <section class="pc-control-section" id="pc-control-section">
+        <div class="section-divider" aria-hidden="true"></div>
+
+        <div class="section-header" id="pc-control-header">
+          <div class="section-heading" id="pc-control-heading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            PC Control Test
+          </div>
+          <span class="section-subtext" id="pc-control-subtext">Desktop OS Verification</span>
+        </div>
+
+        <div class="control-grid" id="control-grid">
+          <button class="btn-control" id="btn-open-browser" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            Open Browser
+          </button>
+
+          <button class="btn-control" id="btn-create-folder" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              <line x1="12" y1="11" x2="12" y2="17"></line>
+              <line x1="9" y1="14" x2="15" y2="14"></line>
+            </svg>
+            Create Desktop Folder
+          </button>
+
+          <button class="btn-control" id="btn-open-notepad" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Open Notepad
+          </button>
+
+          <button class="btn-control" id="btn-open-downloads" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Open Downloads Folder
+          </button>
+
+          <button class="btn-control btn-span-full" id="btn-system-info" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line>
+              <line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line>
+              <line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line>
+              <line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line>
+              <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+            Show System Info
+          </button>
+        </div>
+
+        <!-- Result Log Area -->
+        <div class="log-card" id="log-card">
+          <div class="log-header" id="log-header">
+            <span class="log-title" id="log-title">Execution Log</span>
+            <button class="btn-clear-log" id="btn-clear-log" type="button">Clear</button>
+          </div>
+          <div class="log-output" id="log-output" role="log" aria-live="polite">
+            <div class="log-empty" id="log-empty">No commands executed yet. Click any button above to test local PC control.</div>
+          </div>
+        </div>
+      </section>
+
       <footer class="footer-info" id="app-footer">
-        Jarvis Desktop Assistant Skeleton &bull; Auto-Update Pipeline
+        Jarvis Desktop Assistant Skeleton &bull; Auto-Update & PC Control Pipeline
       </footer>
     </main>
 

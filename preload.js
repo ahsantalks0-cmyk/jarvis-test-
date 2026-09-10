@@ -6,9 +6,6 @@ const { contextBridge, ipcRenderer } = require('electron');
  * while keeping Node.js integration disabled and context isolated.
  */
 contextBridge.exposeInMainWorld('jarvisAPI', {
-  // Empty secure API reserved for requesting future OS actions
-  system: Object.freeze({}),
-
   // Application metadata & updater controls
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
@@ -17,5 +14,14 @@ contextBridge.exposeInMainWorld('jarvisAPI', {
     const listener = (_event, data) => callback(data);
     ipcRenderer.on('update-status', listener);
     return () => ipcRenderer.removeListener('update-status', listener);
-  }
+  },
+
+  // PC Control Test Handlers
+  openBrowser: () => ipcRenderer.invoke('open-browser'),
+  createDesktopFolder: () => ipcRenderer.invoke('create-desktop-folder'),
+  createFolder: () => ipcRenderer.invoke('create-desktop-folder'),
+  openNotepad: () => ipcRenderer.invoke('open-notepad'),
+  openDownloads: () => ipcRenderer.invoke('open-downloads'),
+  getSystemInfo: () => ipcRenderer.invoke('system-info'),
+  systemInfo: () => ipcRenderer.invoke('system-info')
 });

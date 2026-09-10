@@ -1,5 +1,8 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
 const path = require('path');
+const os = require('os');
+const fs = require('fs');
+const { exec } = require('child_process');
 const { autoUpdater } = require('electron-updater');
 
 let mainWindow = null;
@@ -188,6 +191,124 @@ ipcMain.handle('check-for-updates', async () => {
   } catch (err) {
     const msg = err == null ? 'Unknown error' : (err.message || String(err));
     return { success: false, error: msg };
+  }
+});
+
+// PC Control IPC Handlers
+ipcMain.handle('open-browser', async () => {
+  try {
+    await shell.openExternal('https://www.google.com');
+    return {
+      success: true,
+      message: 'Opened default browser to https://www.google.com'
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Failed to open browser: ${err.message || String(err)}`
+    };
+  }
+});
+
+ipcMain.handle('create-desktop-folder', async () => {
+  try {
+    const desktopPath = path.join(os.homedir(), 'Desktop');
+    const folderPath = path.join(desktopPath, 'JarvisTest');
+    if (fs.existsSync(folderPath)) {
+      return {
+        success: true,
+        message: `Folder already exists on Desktop: ${folderPath}`
+      };
+    }
+    fs.mkdirSync(folderPath, { recursive: true });
+    return {
+      success: true,
+      message: `Successfully created folder at: ${folderPath}`
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Failed to create folder: ${err.message || String(err)}`
+    };
+  }
+});
+
+ipcMain.handle('open-notepad', async () => {
+  try {
+    const cmd = process.platform === 'win32'
+      ? 'notepad.exe'
+      : (process.platform === 'darwin' ? 'open -a TextEdit' : 'xdg-open');
+    exec(cmd, (err) => {
+      if (err) {
+        console.warn('[PC-Control] Notepad process finished with note:', err.message);
+      }
+    });
+    return {
+      success: true,
+      message: `Launched Notepad successfully (exec: ${cmd})`
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Failed to launch Notepad: ${err.message || String(err)}`
+    };
+  }
+});
+
+ipcMain.handle('open-downloads', async () => {
+  try {
+    const downloadsPath = path.join(os.homedir(), 'Downloads');
+    const result = await shell.openPath(downloadsPath);
+    if (result) {
+      return {
+        success: false,
+        message: `Failed to open Downloads folder: ${result}`
+      };
+    }
+    return {
+      success: true,
+      message: `Opened Downloads folder in File Explorer: ${downloadsPath}`
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Error opening Downloads folder: ${err.message || String(err)}`
+    };
+  }
+});
+
+ipcMain.handle('system-info', async () => {
+  try {
+    const cpus = os.cpus();
+    const cpuModel = cpus && cpus.length > 0 ? cpus[0].model.trim() : 'Unknown';
+    const totalRamGB = (os.totalmem() / (1024 ** 3)).toFixed(2);
+    const freeRamGB = (os.freemem() / (1024 ** 3)).toFixed(2);
+    const hostname = os.hostname();
+    let username = 'Unknown';
+    try {
+      username = os.userInfo().username;
+    } catch {
+      username = process.env.USERNAME || process.env.USER || 'Unknown';
+    }
+    const platform = `${os.platform()} (${os.release()})`;
+
+    return {
+      success: true,
+      message: `Platform: ${platform} | CPU: ${cpuModel} | RAM: ${freeRamGB} GB free / ${totalRamGB} GB total | Host: ${hostname} | User: ${username}`,
+      data: {
+        platform,
+        cpuModel,
+        totalRamGB,
+        freeRamGB,
+        hostname,
+        username
+      }
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Failed to retrieve system info: ${err.message || String(err)}`
+    };
   }
 });
 
