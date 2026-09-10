@@ -2,6 +2,7 @@
   "name": "jarvis",
   "version": "1.0.0",
   "description": "Jarvis Desktop Assistant",
+  "author": "ahsantalks0-cmyk",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -20,7 +21,7 @@
     "publish": {
       "provider": "github",
       "owner": "ahsantalks0-cmyk",
-      "repo": "jarvis"
+      "repo": "jarvis-test-"
     }
   },
   "dependencies": {
