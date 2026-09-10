@@ -1,0 +1,6 @@
+{
+  "name": "Jarvis",
+  "description": "Desktop assistant Electron app skeleton with auto-updater and secure IPC bridge.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
