@@ -34,3 +34,16 @@ jobs:
         run: npm run dist -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish draft release
+        run: |
+          $v = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $headers = @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"; Accept = "application/vnd.github+json" }
+          $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases" -Headers $headers
+          $draft = $releases | Where-Object { $_.tag_name -eq "v$v" -and $_.draft -eq $true }
+          if ($draft) {
+            Invoke-RestMethod -Method Patch -Uri "https://api.github.com/repos/${{ github.repository }}/releases/$($draft.id)" -Headers $headers -Body '{"draft":false}'
+            Write-Host "Release v$v published!"
+          } else {
+            Write-Host "No draft found for v$v (maybe already published)"
+          }
