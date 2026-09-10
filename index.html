@@ -72,6 +72,30 @@
         color: #f8fafc;
       }
 
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .clock-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        color: #94a3b8;
+        background: #1e293b;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        border: 1px solid #334155;
+      }
+
+      .clock-tag svg {
+        color: #38bdf8;
+      }
+
       .version-tag {
         display: inline-flex;
         align-items: center;
@@ -250,6 +274,16 @@
         margin-bottom: 10px;
       }
 
+      .control-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @media (max-width: 580px) {
+        .control-grid-3 {
+          grid-template-columns: 1fr;
+        }
+      }
+
       .control-grid .btn-span-full {
         grid-column: 1 / -1;
       }
@@ -413,9 +447,18 @@
           </div>
           <h1 class="title" id="app-title">Jarvis v1</h1>
         </div>
-        <div class="version-tag" id="version-tag" title="Application Version">
-          <span class="pulse-dot" id="pulse-dot"></span>
-          <span id="app-version">v1.0.1</span>
+        <div class="header-right" id="header-right">
+          <div class="clock-tag" id="clock-tag" title="Local System Time">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="live-clock">--:--:--</span>
+          </div>
+          <div class="version-tag" id="version-tag" title="Application Version">
+            <span class="pulse-dot" id="pulse-dot"></span>
+            <span id="app-version">v1.0.2</span>
+          </div>
         </div>
       </header>
 
@@ -513,6 +556,54 @@
               <line x1="1" y1="14" x2="4" y2="14"></line>
             </svg>
             Show System Info
+          </button>
+        </div>
+      </section>
+
+      <!-- More PC Tests Section -->
+      <section class="more-pc-tests-section" id="more-pc-tests-section">
+        <div class="section-divider" aria-hidden="true"></div>
+
+        <div class="section-header" id="more-pc-tests-header">
+          <div class="section-heading" id="more-pc-tests-heading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+              <line x1="8" y1="6" x2="16" y2="6"></line>
+              <line x1="16" y1="14" x2="16" y2="18"></line>
+              <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"></path>
+            </svg>
+            More PC Tests
+          </div>
+          <span class="section-subtext" id="more-pc-tests-subtext">Calculator & Clipboard</span>
+        </div>
+
+        <div class="control-grid control-grid-3" id="more-control-grid">
+          <button class="btn-control" id="btn-open-calculator" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+              <line x1="8" y1="6" x2="16" y2="6"></line>
+              <line x1="16" y1="14" x2="16" y2="18"></line>
+              <path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"></path>
+            </svg>
+            Open Calculator
+          </button>
+
+          <button class="btn-control" id="btn-read-clipboard" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <line x1="9" y1="12" x2="15" y2="12"></line>
+              <line x1="9" y1="16" x2="13" y2="16"></line>
+            </svg>
+            Read Clipboard
+          </button>
+
+          <button class="btn-control" id="btn-copy-jarvis" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy Jarvis Was Here
           </button>
         </div>
 

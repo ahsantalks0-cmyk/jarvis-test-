@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, clipboard } = require('electron');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
@@ -308,6 +308,60 @@ ipcMain.handle('system-info', async () => {
     return {
       success: false,
       message: `Failed to retrieve system info: ${err.message || String(err)}`
+    };
+  }
+});
+
+ipcMain.handle('open-calculator', async () => {
+  try {
+    const cmd = process.platform === 'win32'
+      ? 'calc.exe'
+      : (process.platform === 'darwin' ? 'open -a Calculator' : 'gnome-calculator || kcalc || xcalc');
+    exec(cmd, (err) => {
+      if (err) {
+        console.warn('[PC-Control] Calculator process note:', err.message);
+      }
+    });
+    return {
+      success: true,
+      message: `Launched Calculator successfully (exec: ${cmd})`
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Failed to launch Calculator: ${err.message || String(err)}`
+    };
+  }
+});
+
+ipcMain.handle('read-clipboard', async () => {
+  try {
+    const text = clipboard.readText();
+    return {
+      success: true,
+      message: text ? `Clipboard text: "${text}"` : 'Clipboard is empty (no text content)',
+      data: text
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Failed to read clipboard: ${err.message || String(err)}`
+    };
+  }
+});
+
+ipcMain.handle('write-clipboard', async (_event, text) => {
+  try {
+    const content = typeof text === 'string' ? text : String(text ?? '');
+    clipboard.writeText(content);
+    return {
+      success: true,
+      message: `Copied to clipboard: "${content}"`
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: `Failed to write to clipboard: ${err.message || String(err)}`
     };
   }
 });

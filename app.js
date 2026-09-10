@@ -16,13 +16,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnOpenNotepad = document.getElementById('btn-open-notepad');
   const btnOpenDownloads = document.getElementById('btn-open-downloads');
   const btnSystemInfo = document.getElementById('btn-system-info');
+
+  // More PC Tests Buttons
+  const btnOpenCalculator = document.getElementById('btn-open-calculator');
+  const btnReadClipboard = document.getElementById('btn-read-clipboard');
+  const btnCopyJarvis = document.getElementById('btn-copy-jarvis');
+
   const btnClearLog = document.getElementById('btn-clear-log');
   const logOutput = document.getElementById('log-output');
+  const liveClockEl = document.getElementById('live-clock');
 
   const isElectron = Boolean(window.jarvisAPI);
+  let mockClipboard = 'Jarvis was here!';
+
+  // Live Clock in Header (updates every second)
+  function updateLiveClock() {
+    if (!liveClockEl) return;
+    const now = new Date();
+    liveClockEl.textContent = now.toLocaleTimeString();
+  }
+  updateLiveClock();
+  setInterval(updateLiveClock, 1000);
 
   // Initialize version
-  let appVersion = '1.0.1';
+  let appVersion = '1.0.2';
   if (isElectron && window.jarvisAPI.getAppVersion) {
     try {
       appVersion = await window.jarvisAPI.getAppVersion();
@@ -264,6 +281,91 @@ document.addEventListener('DOMContentLoaded', async () => {
           '• Memory:     9.42 GB free / 16.00 GB total'
         ].join('\n')
       }));
+    });
+  }
+
+  // ----------------------------------------------------
+  // More PC Tests Handlers
+  // ----------------------------------------------------
+
+  // 6. Open Calculator
+  if (btnOpenCalculator) {
+    btnOpenCalculator.addEventListener('click', () => {
+      handleControlAction(btnOpenCalculator, 'openCalculator', 'Open Calculator', () => ({
+        success: true,
+        message: 'Launched Calculator using child_process.exec("calc.exe") (simulated in web preview)'
+      }));
+    });
+  }
+
+  // 7. Read Clipboard
+  if (btnReadClipboard) {
+    btnReadClipboard.addEventListener('click', async () => {
+      if (btnReadClipboard) btnReadClipboard.disabled = true;
+      try {
+        if (isElectron && window.jarvisAPI && typeof window.jarvisAPI.readClipboard === 'function') {
+          const res = await window.jarvisAPI.readClipboard();
+          const isSuccess = Boolean(res && res.success);
+          appendLog(
+            isSuccess ? 'SUCCESS' : 'FAILED',
+            (res && res.message) || 'Clipboard inspected'
+          );
+        } else {
+          // Web preview fallback simulation
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          let clipboardText = mockClipboard;
+          try {
+            if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+              const realText = await navigator.clipboard.readText();
+              if (realText) clipboardText = realText;
+            }
+          } catch {
+            // Browser permission or sandbox fallback
+          }
+          appendLog(
+            'SUCCESS',
+            clipboardText ? `Clipboard text: "${clipboardText}"` : 'Clipboard is empty (no text content)'
+          );
+        }
+      } catch (err) {
+        appendLog('FAILED', `Failed to read clipboard: ${err.message || String(err)}`);
+      } finally {
+        if (btnReadClipboard) btnReadClipboard.disabled = false;
+      }
+    });
+  }
+
+  // 8. Copy "Jarvis was here!"
+  if (btnCopyJarvis) {
+    btnCopyJarvis.addEventListener('click', async () => {
+      if (btnCopyJarvis) btnCopyJarvis.disabled = true;
+      const textToCopy = 'Jarvis was here!';
+      try {
+        if (isElectron && window.jarvisAPI && typeof window.jarvisAPI.writeClipboard === 'function') {
+          const res = await window.jarvisAPI.writeClipboard(textToCopy);
+          const isSuccess = Boolean(res && res.success);
+          appendLog(
+            isSuccess ? 'SUCCESS' : 'FAILED',
+            (res && res.message) || `Copied to clipboard: "${textToCopy}"`
+          );
+        } else {
+          // Web preview fallback
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          mockClipboard = textToCopy;
+          try {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+              await navigator.clipboard.writeText(textToCopy);
+            }
+          } catch {
+            // Browser sandbox fallback
+          }
+          appendLog('SUCCESS', `Copied to clipboard: "${textToCopy}"`);
+        }
+      } catch (err) {
+        appendLog('FAILED', `Failed to copy to clipboard: ${err.message || String(err)}`);
+      } finally {
+        if (btnCopyJarvis) btnCopyJarvis.disabled = false;
+      }
     });
   }
 });

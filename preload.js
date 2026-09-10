@@ -23,5 +23,10 @@ contextBridge.exposeInMainWorld('jarvisAPI', {
   openNotepad: () => ipcRenderer.invoke('open-notepad'),
   openDownloads: () => ipcRenderer.invoke('open-downloads'),
   getSystemInfo: () => ipcRenderer.invoke('system-info'),
-  systemInfo: () => ipcRenderer.invoke('system-info')
+  systemInfo: () => ipcRenderer.invoke('system-info'),
+
+  // More PC Tests Handlers
+  openCalculator: () => ipcRenderer.invoke('open-calculator'),
+  readClipboard: () => ipcRenderer.invoke('read-clipboard'),
+  writeClipboard: (text) => ipcRenderer.invoke('write-clipboard', text)
 });
